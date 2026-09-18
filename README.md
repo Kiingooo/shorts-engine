@@ -16,10 +16,27 @@ package. **Nothing in the default path costs money.**
 git clone https://github.com/Kiingooo/shorts-engine.git
 cd shorts-engine
 npm install
-cp .env.example .env
+npm run setup
 ```
 
 Requires Node 18+ (built on 24).
+
+`npm run setup` is an interactive walkthrough that ends with you having your own
+character and your own voice. It:
+
+1. asks what your character is, and prints the two image prompts to generate
+2. removes the background from both images automatically
+3. **detects which region actually differs between them** and rebuilds the
+   open-mouth frame as the closed frame with only that region pasted in, so the
+   pose is pixel-locked and the flap cannot jitter
+4. generates samples of ten free voices and lets you pick one
+5. asks for optional free stock keys
+6. writes your `.env`
+
+It is resumable. Re-running it after a failure skips whatever is already done.
+
+Nobody shares anyone else's credentials: the default voice provider needs no key
+at all, and the stock keys are your own free signups.
 
 ### Keys
 
@@ -75,6 +92,26 @@ Script shape, in `scripts/reactions/<slug>.json`:
 
 `at` is a timestamp in the source clip. The source plays with the character watching,
 then freezes and dims while he talks, then resumes. Put source clips in `clips/`.
+
+### Getting source clips
+
+```bash
+npm run grab -- "https://www.youtube.com/watch?v=..." --name gta-trailer
+```
+
+Wraps **yt-dlp**, which is free, needs no API key and no account, and handles
+YouTube, TikTok, Instagram and most other sites. It is not bundled as a dependency
+because it needs frequent updating to keep working:
+
+```
+Windows   winget install yt-dlp
+macOS     brew install yt-dlp
+Linux     pipx install yt-dlp
+```
+
+yt-dlp also needs ffmpeg on PATH to merge video and audio. This project ships its
+own ffmpeg for rendering, but yt-dlp cannot see it, so install ffmpeg separately if
+merges fail.
 
 Set `"dim": false` on a beat to skip the darkening, or `"playToEnd": false` on the doc
 to cut after the last beat.
