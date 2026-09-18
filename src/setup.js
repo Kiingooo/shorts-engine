@@ -18,7 +18,6 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import ffmpegPath from 'ffmpeg-static';
 import { ROOT } from './config.js';
-import { grabReferences } from './refimages.js';
 
 const run = promisify(execFile);
 const rl = readline.createInterface({ input, output });
@@ -46,6 +45,30 @@ const VOICES = [
   ['en-US-JennyNeural', 'female, US, friendly'],
   ['en-GB-SoniaNeural', 'female, UK, warm'],
 ];
+
+/**
+ * Turns a bare concept into Pinterest search queries.
+ *
+ * Pinterest has no keyless API and scraping it breaks constantly, so the user
+ * collects references by hand. What the wizard can usefully do is widen a
+ * two-word idea into angles worth searching: styling, lighting, framing and
+ * expression, which are the things the prompt later has to specify anyway.
+ */
+function pinterestQueries(keywords) {
+  const k = keywords.trim();
+  return [
+    k,
+    `${k} portrait`,
+    `${k} studio lighting`,
+    `${k} close up face`,
+    `${k} streetwear`,
+    `${k} funny`,
+    `${k} aesthetic`,
+    `${k} character design`,
+    `${k} mouth open`,
+    `${k} front facing`,
+  ];
+}
 
 const promptClosed = (desc) =>
   `Photorealistic studio portrait of ${desc}. Front-facing, head and chest only, `
@@ -141,22 +164,22 @@ async function buildCharacter() {
   // ── reference board ──────────────────────────────────────────────────
   line();
   console.log('  STEP 2 — reference board\n');
-  console.log('  Keywords describing the look you are going for.');
-  console.log('  Example: "rottweiler sunglasses bandana chain"\n');
+  console.log('  Describe the look in a few words. Example:');
+  console.log('  "rottweiler sunglasses bandana chain"\n');
 
   const keywords = await ask('Keywords', 'rottweiler sunglasses');
 
-  if (await yes('Grab 10 reference images for these? (y/n)')) {
-    console.log('\n  Searching...');
-    const saved = await grabReferences(keywords, refDir, 10);
-    if (saved.length) {
-      console.log(`  ✓ ${saved.length} images saved to character/${slug}/reference/`);
-      console.log('    (SOURCES.txt lists where each came from)');
-      await pause('  Open that folder and look through them.');
-    } else {
-      console.log('  Nothing found for those keywords. Carrying on without a board.');
-    }
-  }
+  fs.mkdirSync(refDir, { recursive: true });
+  const queries = pinterestQueries(keywords);
+
+  console.log('\n  Search these on Pinterest and save what you like:\n');
+  queries.forEach((q, i) => console.log(`   ${String(i + 1).padStart(2)}. ${q}`));
+
+  fs.writeFileSync(path.join(refDir, 'SEARCH-THESE.txt'), queries.join('\n') + '\n');
+  console.log(`\n  Also written to character/${slug}/reference/SEARCH-THESE.txt`);
+  console.log(`  Drop the images you collect into that same folder.\n`);
+
+  await pause('  Collect your references, then come back.');
 
   // ── prompt ───────────────────────────────────────────────────────────
   line();
