@@ -5,3 +5,7 @@ out/
 _reference/
 clips/
 !clips/.gitkeep
+
+# assets: keep the folders, ignore the contents
+assets/*/*
+!assets/*/.gitkeep

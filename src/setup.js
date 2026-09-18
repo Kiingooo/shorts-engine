@@ -4,8 +4,11 @@
  * Walks a new user from nothing to a working setup: their own character art,
  * their own voice, their own keys. Nothing here reuses anyone else's account.
  *
- * Deliberately resumable — every step checks whether it is already done, so
- * re-running it after a failure picks up rather than starting over.
+ * Flow: what are you making -> name it -> keywords -> reference board ->
+ * generated prompt -> your two images -> cutout -> pose lock -> voice -> keys.
+ *
+ * Deliberately resumable. Every step checks whether it is already done, so
+ * re-running after a failure picks up rather than starting over.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,6 +18,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import ffmpegPath from 'ffmpeg-static';
 import { ROOT } from './config.js';
+import { grabReferences } from './refimages.js';
 
 const run = promisify(execFile);
 const rl = readline.createInterface({ input, output });
@@ -23,8 +27,9 @@ const ask = async (q, def = '') => {
   const a = (await rl.question(def ? `${q} [${def}]: ` : `${q}: `)).trim();
   return a || def;
 };
+const yes = async (q, def = 'y') => (await ask(q, def)).toLowerCase().startsWith('y');
 const pause = (msg) => rl.question(`\n${msg}\nPress Enter when done... `);
-const line = () => console.log('\n' + '─'.repeat(64) + '\n');
+const line = () => console.log('\n' + '─'.repeat(66) + '\n');
 
 const ff = (args) => run(ffmpegPath, ['-hide_banner', '-loglevel', 'error', '-y', ...args], { maxBuffer: 1 << 28 });
 
@@ -42,9 +47,17 @@ const VOICES = [
   ['en-GB-SoniaNeural', 'female, UK, warm'],
 ];
 
-const PROMPT_CLOSED = (desc) => `Photorealistic studio portrait of ${desc}. Front-facing, head and chest only, shoulders square to camera, centered, sitting upright. Mouth CLOSED, jaw relaxed, calm confident expression. Shot on 85mm, shallow depth of field, soft key light from the left with a cool rim light, natural detail, subtle catchlights. Plain flat background. No text, no logos, no watermark.`;
+const promptClosed = (desc) =>
+  `Photorealistic studio portrait of ${desc}. Front-facing, head and chest only, `
+  + `shoulders square to camera, centered, sitting upright. Mouth CLOSED, jaw relaxed, `
+  + `calm confident expression. Shot on 85mm, shallow depth of field, soft key light from `
+  + `the left with a cool rim light, natural detail, individual hairs visible, subtle `
+  + `catchlights. Plain flat background. No text, no logos, no watermark.`;
 
-const PROMPT_OPEN = `Identical subject, identical outfit and accessories, identical pose, framing, lighting and camera. ONLY difference: mouth OPEN mid-speech, jaw dropped naturally. Everything else pixel-identical.`;
+const PROMPT_OPEN =
+  'Identical subject, identical outfit and accessories, identical pose, framing, lighting '
+  + 'and camera. ONLY difference: mouth OPEN mid-speech, jaw dropped naturally. Everything '
+  + 'else pixel-identical.';
 
 /**
  * Finds the region that differs between the two frames.
@@ -96,126 +109,151 @@ async function detectMouthBox(closed, open, srcSize) {
   }
 }
 
-async function main() {
-  console.log('\n  shorts-engine setup\n');
-  console.log('  Gets you your own character, your own voice, your own keys.');
-  line();
+async function imageWidth(file) {
+  const bin = path.join(ROOT, 'node_modules', 'ffprobe-static', 'bin',
+    process.platform, process.arch, 'ffprobe' + (process.platform === 'win32' ? '.exe' : ''));
+  const { stdout } = await run(bin,
+    ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width', '-of', 'default=nw=1:nk=1', file])
+    .catch(() => ({ stdout: '2048' }));
+  return parseInt(String(stdout).trim(), 10) || 2048;
+}
 
-  // ── 1. character ────────────────────────────────────────────────────────
-  const slug = (await ask('Character folder name (e.g. lilwoof, grizzle)', 'my-character'))
+async function buildCharacter() {
+  line();
+  console.log('  STEP 1 — name it\n');
+
+  const name = await ask('What is the character called?', 'Lil Woof');
+  const slug = (await ask('Folder name', name.toLowerCase().replace(/[^a-z0-9]+/g, '-')))
     .toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
   const charDir = path.join(ROOT, 'character', slug);
+  const refDir = path.join(charDir, 'reference');
   fs.mkdirSync(charDir, { recursive: true });
 
   const closed = path.join(charDir, 'closed.png');
   const open = path.join(charDir, 'open.png');
 
   if (fs.existsSync(closed) && fs.existsSync(open)) {
-    console.log(`\n✓ character/${slug} already has closed.png and open.png, skipping art steps.`);
-  } else {
-    line();
-    console.log('  STEP 1 — generate your character\n');
-    const desc = await ask(
-      'Describe your character in one line',
-      'a real rottweiler wearing a navy paisley bandana, black sunglasses, a silver chain and a white tank top',
-    );
+    console.log(`\n  ✓ character/${slug} already has both images, skipping ahead.`);
+    return { slug, name };
+  }
 
-    console.log('\n  Paste these into your image generator.\n');
-    console.log('  ── PROMPT 1 (mouth closed) ──\n');
-    console.log('  ' + PROMPT_CLOSED(desc) + '\n');
-    console.log('  ── PROMPT 2 (mouth open) ──\n');
-    console.log('  ' + PROMPT_OPEN + '\n');
-    console.log('  Generate the CLOSED one first, then feed it back as an image');
-    console.log('  reference for the OPEN one. If the body drifts between the two,');
-    console.log('  the mouth flap will jitter.\n');
+  // ── reference board ──────────────────────────────────────────────────
+  line();
+  console.log('  STEP 2 — reference board\n');
+  console.log('  Keywords describing the look you are going for.');
+  console.log('  Example: "rottweiler sunglasses bandana chain"\n');
 
-    await pause(`Save both images anywhere, then come back.`);
+  const keywords = await ask('Keywords', 'rottweiler sunglasses');
 
-    const srcClosed = await ask('Full path to the MOUTH CLOSED image');
-    const srcOpen = await ask('Full path to the MOUTH OPEN image');
-    for (const f of [srcClosed, srcOpen]) {
-      if (!fs.existsSync(f)) { console.error(`\n✖ Not found: ${f}\n`); process.exit(1); }
-    }
-
-    // ── 2. background removal ─────────────────────────────────────────────
-    line();
-    console.log('  STEP 2 — background removal\n');
-    const auto = (await ask('Remove backgrounds automatically? (y/n)', 'y')).toLowerCase().startsWith('y');
-
-    const rawClosed = path.join(charDir, '_raw_closed.png');
-    const rawOpen = path.join(charDir, '_raw_open.png');
-    fs.copyFileSync(srcClosed, rawClosed);
-    fs.copyFileSync(srcOpen, rawOpen);
-
-    if (auto) {
-      console.log('\n  Removing backgrounds (first run downloads a model, be patient)...');
-      try {
-        const { removeBackground } = await import('@imgly/background-removal-node');
-        for (const [src, dst] of [[rawClosed, closed], [rawOpen, open]]) {
-          const blob = await removeBackground(`file://${src.replace(/\\/g, '/')}`);
-          fs.writeFileSync(dst, Buffer.from(await blob.arrayBuffer()));
-          console.log(`  ✓ ${path.basename(dst)}`);
-        }
-      } catch (e) {
-        console.error(`\n  ✖ Automatic removal failed: ${e.message}`);
-        console.error('  Do it manually instead, then re-run setup.\n');
-        process.exit(1);
-      }
+  if (await yes('Grab 10 reference images for these? (y/n)')) {
+    console.log('\n  Searching...');
+    const saved = await grabReferences(keywords, refDir, 10);
+    if (saved.length) {
+      console.log(`  ✓ ${saved.length} images saved to character/${slug}/reference/`);
+      console.log('    (SOURCES.txt lists where each came from)');
+      await pause('  Open that folder and look through them.');
     } else {
-      console.log('\n  Use any free cutout tool, then save the transparent PNGs as:');
-      console.log(`    ${closed}`);
-      console.log(`    ${open}`);
-      await pause('Save both, then come back.');
-      for (const f of [closed, open]) {
-        if (!fs.existsSync(f)) { console.error(`\n✖ Missing ${f}\n`); process.exit(1); }
-      }
-    }
-
-    // ── 3. lock everything except the mouth ───────────────────────────────
-    line();
-    console.log('  STEP 3 — locking the pose\n');
-    console.log('  Background removers often punch holes elsewhere in the image, and');
-    console.log('  any drift outside the mouth shows up as a flicker on every flap.');
-    console.log('  So the open frame is rebuilt as the closed frame with only the');
-    console.log('  mouth region pasted in.\n');
-
-    const { stdout: dims } = await run(
-      path.join(ROOT, 'node_modules', 'ffprobe-static', 'bin', process.platform, process.arch, 'ffprobe' + (process.platform === 'win32' ? '.exe' : '')),
-      ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width', '-of', 'default=nw=1:nk=1', closed],
-    ).catch(() => ({ stdout: '2048' }));
-    const srcSize = parseInt(String(dims).trim(), 10) || 2048;
-
-    const box = await detectMouthBox(closed, open, srcSize);
-    if (box && box.w > 40 && box.h > 40) {
-      console.log(`  Detected changed region: ${box.w}x${box.h} at ${box.x},${box.y}`);
-      const ok = (await ask('  Use it? (y/n)', 'y')).toLowerCase().startsWith('y');
-      if (ok) {
-        const patched = path.join(charDir, '_patched.png');
-        await ff(['-i', closed, '-i', open,
-          '-filter_complex', `[1:v]crop=${box.w}:${box.h}:${box.x}:${box.y}[p];[0:v][p]overlay=${box.x}:${box.y}`,
-          '-frames:v', '1', patched]);
-        fs.renameSync(patched, open);
-        console.log('  ✓ open.png rebuilt from the locked base');
-      }
-    } else {
-      console.log('  Could not detect the changed region automatically, leaving both as-is.');
-      console.log('  If the flap flickers, patch manually (see README).');
+      console.log('  Nothing found for those keywords. Carrying on without a board.');
     }
   }
 
-  // ── 4. voice ────────────────────────────────────────────────────────────
+  // ── prompt ───────────────────────────────────────────────────────────
   line();
-  console.log('  STEP 4 — pick a voice\n');
+  console.log('  STEP 3 — your prompt\n');
+  console.log('  Describe the character in one line, using what you just saw.\n');
+
+  const desc = await ask(
+    'Description',
+    `a real ${keywords} wearing a white tank top, photoreal, confident expression`,
+  );
+
+  console.log('\n  ── PROMPT 1 (mouth closed) ──\n');
+  console.log('  ' + promptClosed(desc) + '\n');
+  console.log('  ── PROMPT 2 (mouth open) ──\n');
+  console.log('  ' + PROMPT_OPEN + '\n');
+  console.log('  Generate the CLOSED one first, then feed it back as an image');
+  console.log('  reference for the OPEN one. If the body drifts between the two,');
+  console.log('  the mouth flap will jitter.\n');
+
+  await pause('  Generate both, save them anywhere, then come back.');
+
+  const srcClosed = await ask('  Full path to the MOUTH CLOSED image');
+  const srcOpen = await ask('  Full path to the MOUTH OPEN image');
+  for (const f of [srcClosed, srcOpen]) {
+    if (!fs.existsSync(f)) { console.error(`\n  ✖ Not found: ${f}\n`); process.exit(1); }
+  }
+
+  // ── cutout ───────────────────────────────────────────────────────────
+  line();
+  console.log('  STEP 4 — background removal\n');
+
+  const rawClosed = path.join(charDir, '_raw_closed.png');
+  const rawOpen = path.join(charDir, '_raw_open.png');
+  fs.copyFileSync(srcClosed, rawClosed);
+  fs.copyFileSync(srcOpen, rawOpen);
+
+  if (await yes('Remove backgrounds automatically? (y/n)')) {
+    console.log('\n  Working (first run downloads a model, be patient)...');
+    try {
+      const { removeBackground } = await import('@imgly/background-removal-node');
+      for (const [src, dst] of [[rawClosed, closed], [rawOpen, open]]) {
+        const blob = await removeBackground(`file://${src.replace(/\\/g, '/')}`);
+        fs.writeFileSync(dst, Buffer.from(await blob.arrayBuffer()));
+        console.log(`  ✓ ${path.basename(dst)}`);
+      }
+    } catch (e) {
+      console.error(`\n  ✖ Automatic removal failed: ${e.message}`);
+      console.error('  Cut them out manually, save as closed.png and open.png, re-run setup.\n');
+      process.exit(1);
+    }
+  } else {
+    console.log('\n  Use any free cutout tool, then save the transparent PNGs as:');
+    console.log(`    ${closed}`);
+    console.log(`    ${open}`);
+    await pause('  Save both, then come back.');
+    for (const f of [closed, open]) {
+      if (!fs.existsSync(f)) { console.error(`\n  ✖ Missing ${f}\n`); process.exit(1); }
+    }
+  }
+
+  // ── pose lock ────────────────────────────────────────────────────────
+  line();
+  console.log('  STEP 5 — locking the pose\n');
+  console.log('  Background removers often punch holes elsewhere in the image, and any');
+  console.log('  drift outside the mouth shows up as a flicker on every flap. So the');
+  console.log('  open frame gets rebuilt as the closed frame with only the mouth pasted in.\n');
+
+  const srcSize = await imageWidth(closed);
+  const box = await detectMouthBox(closed, open, srcSize);
+
+  if (box && box.w > 40 && box.h > 40) {
+    console.log(`  Changed region detected: ${box.w}x${box.h} at ${box.x},${box.y}`);
+    if (await yes('  Use it? (y/n)')) {
+      const patched = path.join(charDir, '_patched.png');
+      await ff(['-i', closed, '-i', open,
+        '-filter_complex', `[1:v]crop=${box.w}:${box.h}:${box.x}:${box.y}[p];[0:v][p]overlay=${box.x}:${box.y}`,
+        '-frames:v', '1', patched]);
+      fs.renameSync(patched, open);
+      console.log('  ✓ open.png rebuilt from the locked base');
+    }
+  } else {
+    console.log('  Could not detect the changed region automatically, leaving both as-is.');
+    console.log('  If the flap flickers, patch manually (see README).');
+  }
+
+  return { slug, name };
+}
+
+async function pickVoice() {
+  line();
+  console.log('  STEP 6 — pick a voice\n');
   console.log('  Free, no API key, no account. Microsoft Edge neural voices.\n');
   VOICES.forEach(([id, d], i) => console.log(`   ${String(i + 1).padStart(2)}. ${id.padEnd(34)} ${d}`));
 
-  const sampleDir = path.join(ROOT, 'work', 'voice-samples');
-  fs.mkdirSync(sampleDir, { recursive: true });
-
-  const wantSamples = (await ask('\nGenerate samples of all of these to listen to? (y/n)', 'y'))
-    .toLowerCase().startsWith('y');
-
-  if (wantSamples) {
+  if (await yes('\nGenerate samples of all of these to listen to? (y/n)')) {
+    const sampleDir = path.join(ROOT, 'work', 'voice-samples');
+    fs.mkdirSync(sampleDir, { recursive: true });
     const { Communicate } = await import('edge-tts-universal');
     const demo = 'Hold up. Run that back, I need to see that again.';
     for (const [id] of VOICES) {
@@ -229,26 +267,52 @@ async function main() {
         console.log(`  ✖ ${id} (skipped)`);
       }
     }
-    console.log(`\n  Samples are in work/voice-samples/`);
-    await pause('Listen, then come back.');
+    console.log('\n  Samples are in work/voice-samples/');
+    await pause('  Listen, then come back.');
   }
 
   const pick = parseInt(await ask('Voice number', '1'), 10);
   const voice = (VOICES[pick - 1] || VOICES[0])[0];
   const rate = await ask('Speed (e.g. +0%, +15%, +25%)', '+15%');
+  return { voice, rate };
+}
 
-  // ── 5. keys ─────────────────────────────────────────────────────────────
+async function main() {
+  console.log('\n  shorts-engine setup\n');
+  console.log('  Your own character, your own voice, your own keys.');
+
   line();
-  console.log('  STEP 5 — stock footage keys (optional)\n');
-  console.log('  Only needed for narrated knowledge shorts. Reaction videos do not');
-  console.log('  use them. Both are free and take a minute.\n');
-  console.log('    Pexels   https://www.pexels.com/api/');
-  console.log('    Pixabay  https://pixabay.com/api/docs/\n');
+  console.log('  What are you setting up?\n');
+  console.log('   1. Reaction channel   — a character reacting to clips');
+  console.log('   2. Knowledge channel  — narrated explainers over stock footage');
+  console.log('   3. Both\n');
 
-  const pexels = await ask('PEXELS_API_KEY (Enter to skip)', '');
-  const pixabay = await ask('PIXABAY_API_KEY (Enter to skip)', '');
+  const mode = await ask('Pick', '1');
+  const wantsCharacter = mode === '1' || mode === '3';
+  const wantsStock = mode === '2' || mode === '3';
 
-  // ── 6. write .env ───────────────────────────────────────────────────────
+  let character = null;
+  if (wantsCharacter) character = await buildCharacter();
+
+  const { voice, rate } = await pickVoice();
+
+  // ── keys ───────────────────────────────────────────────────────────────
+  let pexels = '';
+  let pixabay = '';
+  if (wantsStock) {
+    line();
+    console.log('  STEP 7 — stock footage keys\n');
+    console.log('  Both free, about a minute each.\n');
+    console.log('    Pexels   https://www.pexels.com/api/');
+    console.log('    Pixabay  https://pixabay.com/api/docs/\n');
+    pexels = await ask('PEXELS_API_KEY (Enter to skip)', '');
+    pixabay = await ask('PIXABAY_API_KEY (Enter to skip)', '');
+  }
+
+  line();
+  const channelName = await ask('Channel name (shown in the layout header)', 'My Channel');
+  const channelHandle = await ask('Channel handle', '@mychannel');
+
   const envPath = path.join(ROOT, '.env');
   const env = [
     '# Voice: free, no key needed.',
@@ -266,8 +330,8 @@ async function main() {
     `PIXABAY_API_KEY=${pixabay}`,
     '',
     '# Channel identity for the tweet-style layout.',
-    'CHANNEL_NAME=My Channel',
-    'CHANNEL_HANDLE=@mychannel',
+    `CHANNEL_NAME=${channelName}`,
+    `CHANNEL_HANDLE=${channelHandle}`,
     '',
   ].join('\n');
 
@@ -277,17 +341,20 @@ async function main() {
   }
   fs.writeFileSync(envPath, env);
 
-  // ── done ────────────────────────────────────────────────────────────────
   line();
   console.log('  Done.\n');
-  console.log(`  Character: character/${slug}/`);
+  if (character) console.log(`  Character: character/${character.slug}/`);
   console.log(`  Voice:     ${voice} at ${rate}\n`);
-  console.log('  Try it:\n');
-  console.log(`    npm run puppet -- --char ${slug} --seconds 5`);
-  console.log('    npm run grab   -- "<video url>"');
-  console.log('    npm run react  -- --script demo\n');
-  console.log('  Point scripts/reactions/demo.json at your downloaded clip and');
-  console.log(`  set "character": "${slug}".\n`);
+  console.log('  Next:\n');
+  if (character) {
+    console.log(`    npm run puppet -- --char ${character.slug} --seconds 5`);
+    console.log('    npm run grab   -- "<video url>"');
+    console.log('    npm run react  -- --script demo');
+    console.log(`\n  Point scripts/reactions/demo.json at your clip and set`);
+    console.log(`  "character": "${character.slug}".`);
+  }
+  if (wantsStock) console.log('    npm run make   -- --script red-hull-v2');
+  console.log('\n  Drop sound effects into assets/sfx/ when you want them.\n');
 
   rl.close();
 }
