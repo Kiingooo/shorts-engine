@@ -4,7 +4,7 @@
   "character": "lilwoof-v2",
   "flapHz": 3,
   "beats": [
-    { "at": 3.0, "line": "Hold up. Run that back, I need to see that again." },
-    { "at": 8.0, "line": "Nah, that is crazy. They really did that." }
+    { "at": 3.0, "line": "Hold up. Run that back, I need to see that again.", "sfx": "record-scratch.mp3" },
+    { "at": 8.0, "line": "Nah that is crazy", "voiceDrop": "ayo.mp3" }
   ]
 }

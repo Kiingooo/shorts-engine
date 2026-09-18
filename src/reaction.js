@@ -29,6 +29,7 @@ const W = 1080;
 const H = 1920;
 const CHAR_W = 460;
 const CHAR_MARGIN = 36;
+const SFX_VOLUME = 0.35;
 
 const arg = (n, d) => {
   const i = process.argv.indexOf(`--${n}`);
@@ -42,6 +43,13 @@ async function probe(file, entries) {
   const { stdout } = await run(ffprobeStatic.path,
     ['-v', 'error', '-show_entries', entries, '-of', 'default=nw=1:nk=1', file]);
   return stdout.trim().split('\n');
+}
+
+/** Resolves a filename against assets/<kind>/, returning null if absent. */
+function asset(kind, name) {
+  if (!name) return null;
+  const file = path.isAbsolute(name) ? name : path.join(process.cwd(), 'assets', kind, name);
+  return fs.existsSync(file) ? file : null;
 }
 
 const ts = (s) => {
@@ -85,6 +93,38 @@ function writeLineAss(words, file) {
     }
   }
   fs.writeFileSync(file, head + ev.join('\n') + '\n', 'utf8');
+}
+
+/**
+ * Caption for a pre-recorded voice drop.
+ *
+ * A drop is just an audio file, so there are no word timings to highlight
+ * against. The line is held as one static card for the whole beat instead.
+ */
+function writeStaticAss(text, duration, file) {
+  const SIZE = 74;
+  const head = [
+    '[Script Info]',
+    'ScriptType: v4.00+',
+    `PlayResX: ${W}`,
+    `PlayResY: ${H}`,
+    'WrapStyle: 0',
+    'ScaledBorderAndShadow: yes',
+    '',
+    '[V4+ Styles]',
+    'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
+    `Style: Cap,Impact,${SIZE},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,6,3,2,80,80,640,1`,
+    '',
+    '[Events]',
+    'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text',
+    '',
+  ].join('\n');
+
+  const label = String(text || '').toUpperCase().replace(/[{}\\]/g, '');
+  const body = label
+    ? `Dialogue: 0,${ts(0)},${ts(duration)},Cap,,0,0,0,,${label}\n`
+    : '';
+  fs.writeFileSync(file, head + body, 'utf8');
 }
 
 const COVER = `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1`;
@@ -159,22 +199,52 @@ async function main() {
     const frame = path.join(segDir, `f${n}.png`);
     await ff(['-ss', String(at), '-i', source, '-frames:v', '1', frame]);
 
-    const lineAudio = path.join(segDir, `a${n}.mp3`);
-    const { words, duration } = await synthesize(beat.line, lineAudio);
-    const hold = duration + 0.25;
-
-    const { full, half } = flapWindows(words, hz, hold);
     const assFile = path.join(segDir, `c${n}.ass`);
-    writeLineAss(words, assFile);
+    const drop = asset('voice-drops', beat.voiceDrop);
+    let lineAudio;
+    let duration;
+    let words;
 
+    if (drop) {
+      // A drop is pre-recorded, so there are no word timings. Treat the whole
+      // file as one continuous "word" and let the mouth flap right through it.
+      lineAudio = drop;
+      const [d] = await probe(drop, 'format=duration');
+      duration = parseFloat(d) || 1;
+      words = [{ text: beat.line || '', start: 0, end: duration }];
+      writeStaticAss(beat.line, duration, assFile);
+    } else {
+      lineAudio = path.join(segDir, `a${n}.mp3`);
+      ({ words, duration } = await synthesize(beat.line, lineAudio));
+      writeLineAss(words, assFile);
+    }
+
+    const hold = duration + 0.25;
+    const { full, half } = flapWindows(words, hz, hold);
+
+    const sfx = asset('sfx', beat.sfx);
     const dim = beat.dim === false ? '' : ',eq=brightness=-0.06';
     const seg = path.join(segDir, `s${String(n++).padStart(3, '0')}.mp4`);
 
-    await ff([
+    const inputs = [
       '-loop', '1', '-t', String(hold), '-i', frame,
       '-loop', '1', '-i', closed,
       '-loop', '1', '-i', open,
       '-i', lineAudio,
+    ];
+
+    let audioChain = '';
+    let aMap = '3:a';
+    if (sfx) {
+      inputs.push('-i', sfx);
+      // Mixed under the voice, not over it: the effect punctuates the line.
+      audioChain = `;[4:a]volume=${SFX_VOLUME}[sx];`
+        + `[3:a][sx]amix=inputs=2:duration=first:dropout_transition=0[a]`;
+      aMap = '[a]';
+    }
+
+    await ff([
+      ...inputs,
       '-filter_complex',
         `[0:v]${COVER}${dim}[bgv];`
       + `[1:v]scale=${CHAR_W}:-1[c];`
@@ -183,15 +253,17 @@ async function main() {
       + `[bgv][c]${CHAR_POS}[b1];`
       + `[b1][oh]${CHAR_POS}:enable='${enableExpr(half)}'[b2];`
       + `[b2][of]${CHAR_POS}:enable='${enableExpr(full)}'[b3];`
-      + `[b3]subtitles=${path.basename(assFile)}[v]`,
-      '-map', '[v]', '-map', '3:a',
+      + `[b3]subtitles=${path.basename(assFile)}[v]`
+      + audioChain,
+      '-map', '[v]', '-map', aMap,
       '-t', String(hold),
       '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '21', '-pix_fmt', 'yuv420p',
       '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-ac', '2', seg,
     ], { cwd: segDir });
 
     segments.push(seg);
-    console.log(`  react  @${at.toFixed(2)}  ${hold.toFixed(2)}s`);
+    const tags = [drop ? 'drop' : 'tts', sfx ? 'sfx' : null].filter(Boolean).join('+');
+    console.log(`  react  @${at.toFixed(2)}  ${hold.toFixed(2)}s  [${tags}]`);
     cursor = at;
   }
 

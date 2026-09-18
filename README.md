@@ -95,8 +95,21 @@ Script shape, in `scripts/reactions/<slug>.json`:
 `at` is a timestamp in the source clip. The source plays with the character watching,
 then freezes and dims while he talks, then resumes. Put source clips in `clips/`.
 
-Set `"dim": false` on a beat to skip the darkening, or `"playToEnd": false` on the doc
-to cut after the last beat.
+Optional per-beat fields:
+
+| field | effect |
+|---|---|
+| `sfx` | mixes a one-shot from `assets/sfx/` under the voice |
+| `voiceDrop` | plays a pre-recorded file from `assets/voice-drops/` instead of synthesising the line |
+| `dim` | `false` skips darkening the frozen frame |
+
+With `voiceDrop` there are no word timings, so the mouth flaps continuously for the
+length of the file and `line` is held as one static caption instead of word-by-word.
+
+A missing asset file is ignored rather than fatal, so a script referencing sounds you
+have not added yet still renders.
+
+`"playToEnd": false` on the doc cuts after the last beat.
 
 ### Getting source clips
 
