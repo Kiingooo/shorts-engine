@@ -1,0 +1,15 @@
+{
+  "title": "The Painted Zones on a Ship Deck Nobody Is Allowed to Stand In",
+  "niche": "ships-and-ocean",
+  "scenes": [
+    { "id": 1, "text": "On every ship deck there are painted areas the crew will not stand in.", "visual_1": "ship deck", "visual_2": "painted line floor industrial", "visual_fallback": "ship deck" },
+    { "id": 2, "text": "No machinery, no cargo. Just paint, and a warning.", "visual_1": "warning sign industrial", "visual_2": "yellow painted floor marking", "visual_fallback": "warning sign" },
+    { "id": 3, "text": "To anyone visiting, they look like nothing at all.", "visual_1": "empty ship deck", "visual_2": "harbor dock walkway", "visual_fallback": "dock" },
+    { "id": 4, "text": "The ropes holding a ship to the dock are under enormous tension.", "visual_1": "mooring rope dock", "visual_2": "thick rope bollard", "visual_fallback": "rope" },
+    { "id": 5, "text": "Modern rope is synthetic, and synthetic rope stretches.", "visual_1": "rope close up texture", "visual_2": "coiled rope harbor", "visual_fallback": "rope" },
+    { "id": 6, "text": "Stretching stores energy, exactly like drawing back a bow.", "visual_1": "rope tension pulling", "visual_2": "rope knot tight", "visual_fallback": "rope" },
+    { "id": 7, "text": "If the line parts, all of that energy releases at once.", "visual_1": "broken frayed rope", "visual_2": "ocean storm waves", "visual_fallback": "rope" },
+    { "id": 8, "text": "The end whips back faster than any person could move out of the way.", "visual_1": "rough sea ship", "visual_2": "harbor ship moored", "visual_fallback": "harbor" },
+    { "id": 9, "text": "The paint marks where it would travel. The safest place on deck is the one you never cross.", "visual_1": "ship deck sunset", "visual_2": "cargo ship port", "visual_fallback": "ship" }
+  ]
+}

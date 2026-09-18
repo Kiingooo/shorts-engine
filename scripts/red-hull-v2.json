@@ -1,0 +1,28 @@
+{
+  "title": "Why Is the Bottom of Every Ship Painted Red?",
+  "niche": "ships-and-ocean",
+  "hook": "Why is the bottom of every ship painted red?",
+  "loop": "Final line ends on 'the next time a ship is lifted out of the water,' which hands straight back into scene 2, 'Pull any ship out of the water...'. Pattern A: completed thought.",
+  "scenes": [
+    { "id": 1, "text": "Can you believe this?", "visual_1": "ship dry dock", "visual_2": "shipyard crane", "visual_fallback": "shipyard" },
+    { "id": 2, "text": "Pull any ship out of the water, and the bottom is always the same colour.", "visual_1": "ship lifted dry dock", "visual_2": "ship hull waterline", "visual_fallback": "ship" },
+    { "id": 3, "text": "Red. Never blue, never green.", "visual_1": "red painted ship hull", "visual_2": "red metal texture", "visual_fallback": "red paint" },
+    { "id": 4, "text": "Is it simply tradition, copied from yard to yard without anyone asking why?", "visual_1": "old shipyard harbor", "visual_2": "fishing boats dock", "visual_fallback": "harbor" },
+    { "id": 5, "text": "Actually, no.", "visual_1": "ship hull close up", "visual_2": "shipyard worker", "visual_fallback": "shipyard" },
+    { "id": 6, "text": "Below the waterline, bare steel is a free surface for barnacles and weed.", "visual_1": "barnacles rock", "visual_2": "underwater seaweed rock", "visual_fallback": "underwater" },
+    { "id": 7, "text": "They begin settling within weeks of a ship entering the water.", "visual_1": "underwater rocks ocean", "visual_2": "ocean floor sand", "visual_fallback": "underwater" },
+    { "id": 8, "text": "On a warm, shallow coast, a clean hull can disappear under a crust of living things in a single month.", "visual_1": "shallow tropical water", "visual_2": "mussels shells cluster", "visual_fallback": "shells" },
+    { "id": 9, "text": "A hull covered in growth is no longer smooth.", "visual_1": "boat hull water", "visual_2": "ship hull surface", "visual_fallback": "boat hull" },
+    { "id": 10, "text": "It drags through the water, and drag has to be paid for in fuel.", "visual_1": "ship wake ocean", "visual_2": "ocean waves ship moving", "visual_fallback": "ocean waves" },
+    { "id": 11, "text": "A heavily fouled hull can raise fuel use by as much as forty percent.", "visual_1": "ship engine room machinery", "visual_2": "industrial gauge dial", "visual_fallback": "machinery" },
+    { "id": 12, "text": "On a large container ship, that is thousands of dollars burned every single day.", "visual_1": "container ship ocean aerial", "visual_2": "port containers stacked", "visual_fallback": "container ship" },
+    { "id": 13, "text": "So the coating below the waterline is not really paint. It is a slow poison.", "visual_1": "industrial paint bucket", "visual_2": "paint roller metal surface", "visual_fallback": "paint" },
+    { "id": 14, "text": "It carries copper compounds that stop anything from taking hold.", "visual_1": "copper metal texture", "visual_2": "green copper patina", "visual_fallback": "metal texture" },
+    { "id": 15, "text": "Sailors worked this out centuries ago, nailing sheets of copper straight onto wooden hulls.", "visual_1": "old wooden ship", "visual_2": "tall ship sailing", "visual_fallback": "wooden boat" },
+    { "id": 16, "text": "But the copper only works if it leaves the surface slowly.", "visual_1": "peeling paint metal", "visual_2": "weathered metal surface", "visual_fallback": "metal surface" },
+    { "id": 17, "text": "Release it too quickly, and the protection is gone within a single season.", "visual_1": "rusty ship hull", "visual_2": "worn boat hull", "visual_fallback": "rust" },
+    { "id": 18, "text": "Release it too slowly, and the barnacles take hold anyway.", "visual_1": "barnacles hull", "visual_2": "underwater rocks barnacles", "visual_fallback": "barnacles" },
+    { "id": 19, "text": "So the coating is built to wear away a few microns at a time, staying fresh for years.", "visual_1": "shipyard worker painting hull", "visual_2": "ship maintenance dry dock", "visual_fallback": "shipyard" },
+    { "id": 20, "text": "Copper oxide simply happens to be red. Which is why, the next time a ship is lifted out of the water,", "visual_1": "ship dry dock lifted", "visual_2": "cargo ship harbor sunset", "visual_fallback": "ship harbor" }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "title": "Why Do Cargo Ships Have a Giant Bulb on the Front?",
+  "niche": "ships-and-ocean",
+  "formula": "hook-question / fake-out / mechanism / payoff",
+  "scenes": [
+    {
+      "id": 1,
+      "text": "Look at the front of any massive cargo ship, and you will find something that makes no sense.",
+      "visual_1": "container ship ocean aerial",
+      "visual_2": "cargo ship bow water",
+      "visual_fallback": "ship sea"
+    },
+    {
+      "id": 2,
+      "text": "A giant steel bulb, bolted to the very bottom of the bow.",
+      "visual_1": "ship dry dock hull",
+      "visual_2": "shipyard repair hull",
+      "visual_fallback": "shipyard"
+    },
+    {
+      "id": 3,
+      "text": "It looks like damage that nobody bothered to fix.",
+      "visual_1": "rusty ship hull",
+      "visual_2": "old ship metal",
+      "visual_fallback": "rust metal"
+    },
+    {
+      "id": 4,
+      "text": "So why would engineers add a huge lump of steel to the fastest part of the ship?",
+      "visual_1": "engineer blueprint drawing",
+      "visual_2": "shipyard workers welding",
+      "visual_fallback": "engineering"
+    },
+    {
+      "id": 5,
+      "text": "Because a moving ship pushes a wave up in front of itself, and that wave is wasted energy.",
+      "visual_1": "ship bow wave sea",
+      "visual_2": "ocean waves crashing",
+      "visual_fallback": "ocean waves"
+    },
+    {
+      "id": 6,
+      "text": "The bulb sits ahead of the hull, and it makes a second wave of its own.",
+      "visual_1": "underwater ocean surface",
+      "visual_2": "water ripple slow motion",
+      "visual_fallback": "underwater"
+    },
+    {
+      "id": 7,
+      "text": "The two waves collide, cancel each other out, and the water goes almost flat.",
+      "visual_1": "calm ocean surface",
+      "visual_2": "ship sailing calm sea",
+      "visual_fallback": "calm water"
+    },
+    {
+      "id": 8,
+      "text": "Less wave means less drag, and less drag can cut fuel use by fifteen percent.",
+      "visual_1": "ship engine room machinery",
+      "visual_2": "industrial gauge dial",
+      "visual_fallback": "machinery"
+    },
+    {
+      "id": 9,
+      "text": "On a ship burning a hundred tons of fuel a day, that ugly bulb pays for itself in one voyage.",
+      "visual_1": "cargo ship sunset ocean",
+      "visual_2": "port containers crane",
+      "visual_fallback": "harbor port"
+    }
+  ]
+}

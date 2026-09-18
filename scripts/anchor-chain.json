@@ -1,0 +1,15 @@
+{
+  "title": "An Anchor Does Not Hold a Ship by Being Heavy",
+  "niche": "ships-and-ocean",
+  "scenes": [
+    { "id": 1, "text": "An anchor does not hold a ship by being heavy.", "visual_1": "ship anchor", "visual_2": "anchor chain metal", "visual_fallback": "anchor" },
+    { "id": 2, "text": "On a vessel weighing fifty thousand tons, the anchor might weigh ten.", "visual_1": "large cargo ship", "visual_2": "ship bow anchor", "visual_fallback": "ship" },
+    { "id": 3, "text": "That is nothing. It should skate across the seabed like a pebble.", "visual_1": "seabed sand underwater", "visual_2": "underwater rocks ocean floor", "visual_fallback": "underwater" },
+    { "id": 4, "text": "The holding power does not come from the anchor. It comes from the chain.", "visual_1": "heavy chain links", "visual_2": "rusty chain close up", "visual_fallback": "chain" },
+    { "id": 5, "text": "Crews release far more chain than the water is deep, sometimes five times more.", "visual_1": "anchor chain winch", "visual_2": "ship deck machinery", "visual_fallback": "chain" },
+    { "id": 6, "text": "Most of that chain ends up lying flat along the bottom.", "visual_1": "ocean floor sand", "visual_2": "underwater visibility blue", "visual_fallback": "underwater" },
+    { "id": 7, "text": "Its weight pulls the anchor sideways instead of upward.", "visual_1": "anchor on ground", "visual_2": "metal anchor detail", "visual_fallback": "anchor" },
+    { "id": 8, "text": "Pulled up, it pops free instantly. Pulled sideways, it digs itself deeper.", "visual_1": "sand digging", "visual_2": "seabed sand ripples", "visual_fallback": "sand" },
+    { "id": 9, "text": "The anchor is not what holds the ship. The chain is.", "visual_1": "ship at anchor sea", "visual_2": "calm harbor ship", "visual_fallback": "ship sea" }
+  ]
+}

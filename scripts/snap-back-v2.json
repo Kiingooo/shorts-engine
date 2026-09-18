@@ -1,0 +1,27 @@
+{
+  "title": "The Painted Zones on a Ship Deck Nobody Stands In",
+  "niche": "ships-and-ocean",
+  "hook": "Why will no sailor stand inside these painted lines?",
+  "loop": "Ends on 'which is why, on every deck in the world, there are painted lines' handing back into scene 2. Pattern A.",
+  "scenes": [
+    { "id": 1, "text": "Can you believe this?", "visual_1": "ship deck", "visual_2": "cargo ship deck walkway", "visual_fallback": "ship deck" },
+    { "id": 2, "text": "On the deck of almost every working ship, there are painted areas the crew will not stand in.", "visual_1": "painted line floor industrial", "visual_2": "yellow floor marking", "visual_fallback": "ship deck" },
+    { "id": 3, "text": "No machinery. No cargo. Just paint.", "visual_1": "empty ship deck", "visual_2": "dock walkway harbor", "visual_fallback": "dock" },
+    { "id": 4, "text": "Is it just caution? A rule written by someone who has never worked a deck?", "visual_1": "warning sign industrial", "visual_2": "safety sign harbor", "visual_fallback": "warning sign" },
+    { "id": 5, "text": "Not at all.", "visual_1": "mooring rope bollard", "visual_2": "thick rope dock", "visual_fallback": "rope" },
+    { "id": 6, "text": "A moored ship is not sitting still. Wind and current push it constantly against its lines.", "visual_1": "ship moored harbor", "visual_2": "harbor water movement", "visual_fallback": "harbor" },
+    { "id": 7, "text": "Those lines can carry tens of tons of load, hour after hour.", "visual_1": "mooring rope tension", "visual_2": "rope bollard tight", "visual_fallback": "rope" },
+    { "id": 8, "text": "And modern mooring line is not steel. It is synthetic rope.", "visual_1": "rope close up texture", "visual_2": "coiled rope harbor", "visual_fallback": "rope" },
+    { "id": 9, "text": "Synthetic rope is lighter, easier to handle, and it does something steel does not.", "visual_1": "rope coil detail", "visual_2": "rope knot", "visual_fallback": "rope" },
+    { "id": 10, "text": "It stretches.", "visual_1": "rope pulling tension", "visual_2": "rope strands close", "visual_fallback": "rope" },
+    { "id": 11, "text": "A line under heavy load can stretch by several percent of its own length.", "visual_1": "long rope dock", "visual_2": "rope tied bollard", "visual_fallback": "rope" },
+    { "id": 12, "text": "And every centimetre of that stretch is stored energy, exactly like drawing back a bow.", "visual_1": "rope tight strain", "visual_2": "thick rope tension", "visual_fallback": "rope" },
+    { "id": 13, "text": "As long as the rope holds, nothing happens. The energy simply sits there.", "visual_1": "calm harbor ship", "visual_2": "moored ship still water", "visual_fallback": "harbor" },
+    { "id": 14, "text": "But if the line parts, all of it is released in a fraction of a second.", "visual_1": "frayed broken rope", "visual_2": "worn rope damaged", "visual_fallback": "rope" },
+    { "id": 15, "text": "The ends whip back along the path the rope was pulling.", "visual_1": "rope whipping motion", "visual_2": "rough sea spray", "visual_fallback": "rope" },
+    { "id": 16, "text": "Faster than a person can see it happen, let alone move.", "visual_1": "ship deck fast motion", "visual_2": "harbor waves spray", "visual_fallback": "harbor" },
+    { "id": 17, "text": "So crews map those paths in advance, and mark the ground where the ends would travel.", "visual_1": "painted deck marking", "visual_2": "industrial floor paint", "visual_fallback": "painted floor" },
+    { "id": 18, "text": "The safest place to stand on a working deck is decided long before the rope ever breaks.", "visual_1": "ship deck sunset", "visual_2": "cargo ship port", "visual_fallback": "ship" },
+    { "id": 19, "text": "Which is why, on every deck in the world,", "visual_1": "ship deck aerial", "visual_2": "cargo ship harbor", "visual_fallback": "ship deck" }
+  ]
+}

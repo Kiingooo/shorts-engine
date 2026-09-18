@@ -1,0 +1,15 @@
+{
+  "title": "Why Port Cranes Move in That Strange Hesitant Rhythm",
+  "niche": "ships-and-ocean",
+  "scenes": [
+    { "id": 1, "text": "Watch a container crane at any port, and the movement looks oddly hesitant.", "visual_1": "port crane container", "visual_2": "container terminal cranes", "visual_fallback": "port crane" },
+    { "id": 2, "text": "It rushes, then eases, then creeps the last few metres.", "visual_1": "crane lifting container", "visual_2": "shipping containers stacked", "visual_fallback": "containers" },
+    { "id": 3, "text": "It looks like an operator being far too careful.", "visual_1": "crane operator cabin", "visual_2": "industrial control panel", "visual_fallback": "industrial" },
+    { "id": 4, "text": "It is actually the crane fighting physics.", "visual_1": "crane cables steel", "visual_2": "heavy machinery port", "visual_fallback": "crane" },
+    { "id": 5, "text": "A container hanging from cables is a pendulum weighing thirty tons.", "visual_1": "container hanging crane", "visual_2": "steel cable tension", "visual_fallback": "crane" },
+    { "id": 6, "text": "Move too fast and the box keeps swinging long after the crane stops.", "visual_1": "swinging load crane", "visual_2": "container ship loading", "visual_fallback": "containers" },
+    { "id": 7, "text": "So the crane accelerates and brakes in a pattern timed to cancel the swing.", "visual_1": "port crane moving", "visual_2": "container terminal aerial", "visual_fallback": "port" },
+    { "id": 8, "text": "Done correctly, the container arrives already perfectly still.", "visual_1": "container placed stack", "visual_2": "containers aerial port", "visual_fallback": "containers" },
+    { "id": 9, "text": "That hesitation is not caution. It is the fastest possible way to move it.", "visual_1": "port containers sunset", "visual_2": "cargo ship port aerial", "visual_fallback": "port" }
+  ]
+}

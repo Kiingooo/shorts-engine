@@ -1,0 +1,15 @@
+{
+  "title": "Why Is the Bottom of Every Ship Painted Red?",
+  "niche": "ships-and-ocean",
+  "scenes": [
+    { "id": 1, "text": "Pull any ship out of the water, and the bottom is always the same colour.", "visual_1": "ship dry dock", "visual_2": "ship hull red paint", "visual_fallback": "shipyard" },
+    { "id": 2, "text": "Never blue. Never green. Red, on almost every hull in the world.", "visual_1": "cargo ship hull", "visual_2": "red painted metal", "visual_fallback": "ship" },
+    { "id": 3, "text": "It looks like tradition, or a rule nobody ever questioned.", "visual_1": "old ship harbor", "visual_2": "fishing boat dock", "visual_fallback": "harbor" },
+    { "id": 4, "text": "But that colour is a side effect of keeping the ship alive.", "visual_1": "shipyard worker painting", "visual_2": "ship maintenance dock", "visual_fallback": "shipyard" },
+    { "id": 5, "text": "Below the waterline, barnacles and weed grow on bare steel within weeks.", "visual_1": "barnacles rock", "visual_2": "underwater seaweed rock", "visual_fallback": "underwater" },
+    { "id": 6, "text": "A fouled hull drags through the water, and drag burns fuel.", "visual_1": "ship wake ocean", "visual_2": "ship moving water", "visual_fallback": "ocean waves" },
+    { "id": 7, "text": "So the paint is loaded with copper compounds that stop anything from taking hold.", "visual_1": "industrial paint bucket", "visual_2": "paint roller metal", "visual_fallback": "paint" },
+    { "id": 8, "text": "Copper oxide is naturally red, and cheap enough to cover a hull the size of a building.", "visual_1": "copper metal texture", "visual_2": "rust red metal surface", "visual_fallback": "metal texture" },
+    { "id": 9, "text": "The colour was never a choice. It is simply what protection looks like.", "visual_1": "cargo ship ocean sunset", "visual_2": "container ship sea", "visual_fallback": "ship sea" }
+  ]
+}

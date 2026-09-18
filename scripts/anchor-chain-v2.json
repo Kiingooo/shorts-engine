@@ -1,0 +1,27 @@
+{
+  "title": "An Anchor Does Not Hold a Ship by Being Heavy",
+  "niche": "ships-and-ocean",
+  "hook": "How does a ten ton anchor hold a fifty thousand ton ship?",
+  "loop": "Ends on 'when a ship of fifty thousand tons rides out a storm on ten tons of steel,' handing back into scene 2. Pattern A.",
+  "scenes": [
+    { "id": 1, "text": "Watch this.", "visual_1": "ship anchor chain", "visual_2": "anchor dropping water", "visual_fallback": "anchor" },
+    { "id": 2, "text": "A ship weighing fifty thousand tons is being held in place by an anchor that weighs ten.", "visual_1": "large cargo ship sea", "visual_2": "ship bow anchor", "visual_fallback": "ship" },
+    { "id": 3, "text": "Ten tons, against fifty thousand.", "visual_1": "heavy anchor metal", "visual_2": "anchor close up", "visual_fallback": "anchor" },
+    { "id": 4, "text": "So is the anchor simply enormous? Heavy enough to pin a steel island to the seabed?", "visual_1": "ship anchor large", "visual_2": "anchor chain links", "visual_fallback": "chain" },
+    { "id": 5, "text": "Not even close.", "visual_1": "seabed sand underwater", "visual_2": "underwater ocean floor", "visual_fallback": "underwater" },
+    { "id": 6, "text": "On its own, an anchor that size would skate across the bottom like a stone.", "visual_1": "sand underwater current", "visual_2": "ocean floor rocks", "visual_fallback": "underwater" },
+    { "id": 7, "text": "The holding power was never really in the anchor. It is in the chain.", "visual_1": "heavy chain links rusty", "visual_2": "chain close up metal", "visual_fallback": "chain" },
+    { "id": 8, "text": "Crews pay out far more chain than the water is deep. Often five to seven times more.", "visual_1": "anchor chain winch deck", "visual_2": "ship deck machinery", "visual_fallback": "ship deck" },
+    { "id": 9, "text": "In thirty metres of water, that can mean two hundred metres of chain.", "visual_1": "chain pile deck", "visual_2": "anchor windlass", "visual_fallback": "chain" },
+    { "id": 10, "text": "Most of it never hangs. It lies flat along the seabed.", "visual_1": "ocean floor sand ripples", "visual_2": "underwater visibility blue", "visual_fallback": "underwater" },
+    { "id": 11, "text": "And that is the whole trick.", "visual_1": "anchor on seabed", "visual_2": "metal anchor detail", "visual_fallback": "anchor" },
+    { "id": 12, "text": "The weight of the chain keeps the pull on the anchor horizontal instead of upward.", "visual_1": "chain tension pulling", "visual_2": "steel chain heavy", "visual_fallback": "chain" },
+    { "id": 13, "text": "Pulled sideways, the flukes bite in and drag themselves deeper.", "visual_1": "sand digging underwater", "visual_2": "seabed sand", "visual_fallback": "sand" },
+    { "id": 14, "text": "Pulled upward, the same anchor pops free instantly.", "visual_1": "anchor lifting water", "visual_2": "anchor raised chain", "visual_fallback": "anchor" },
+    { "id": 15, "text": "But the chain is doing something else as well.", "visual_1": "rough sea waves", "visual_2": "ship rough water", "visual_fallback": "rough sea" },
+    { "id": 16, "text": "When a wave lifts the bow, the curve of chain on the bottom straightens instead of jerking the anchor.", "visual_1": "ship bow waves", "visual_2": "storm sea ship", "visual_fallback": "waves" },
+    { "id": 17, "text": "It works as a spring, absorbing every surge before it ever reaches the seabed.", "visual_1": "ocean swell", "visual_2": "waves ocean surface", "visual_fallback": "ocean waves" },
+    { "id": 18, "text": "Let out too little chain, and that curve disappears. The pull turns upward, and the anchor starts to drag.", "visual_1": "anchor chain taut", "visual_2": "ship anchored harbor", "visual_fallback": "harbor" },
+    { "id": 19, "text": "Which is how a ship of fifty thousand tons rides out a storm", "visual_1": "cargo ship storm sea", "visual_2": "ship at anchor sunset", "visual_fallback": "ship sea" }
+  ]
+}

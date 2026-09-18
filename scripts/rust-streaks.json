@@ -1,0 +1,15 @@
+{
+  "title": "Why Brand New Ships Are Already Covered in Rust",
+  "niche": "ships-and-ocean",
+  "scenes": [
+    { "id": 1, "text": "Look at almost any working ship and you will see rust running down the sides.", "visual_1": "rusty ship side", "visual_2": "ship hull weathered", "visual_fallback": "rust" },
+    { "id": 2, "text": "Even on vessels that left the shipyard only months ago.", "visual_1": "new cargo ship", "visual_2": "shipyard construction", "visual_fallback": "shipyard" },
+    { "id": 3, "text": "It looks like neglect. Like nobody has maintained it in years.", "visual_1": "abandoned rusty boat", "visual_2": "old metal peeling paint", "visual_fallback": "rust metal" },
+    { "id": 4, "text": "But most of that rust is not the hull at all.", "visual_1": "ship hull close up", "visual_2": "steel plate surface", "visual_fallback": "metal surface" },
+    { "id": 5, "text": "A ship is covered in bolts, railings, hatches and fittings, all different metals.", "visual_1": "ship railing metal", "visual_2": "bolts rivets steel", "visual_fallback": "metal bolts" },
+    { "id": 6, "text": "Salt water collects in every joint and seam, and it never fully dries.", "visual_1": "sea water splashing metal", "visual_2": "water droplets metal surface", "visual_fallback": "water metal" },
+    { "id": 7, "text": "Those small parts corrode first, long before the steel around them.", "visual_1": "rusty bolt close up", "visual_2": "corroded metal detail", "visual_fallback": "rust" },
+    { "id": 8, "text": "Rain then carries the stain downward, painting streaks across good paint.", "visual_1": "rain running down surface", "visual_2": "rust streak wall", "visual_fallback": "rain" },
+    { "id": 9, "text": "At sea, a spotless hull does not mean a healthy ship. It means a recent repaint.", "visual_1": "cargo ship ocean", "visual_2": "ship harbor sunset", "visual_fallback": "ship sea" }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "title": "Why Port Cranes Move in That Strange Hesitant Rhythm",
+  "niche": "ships-and-ocean",
+  "hook": "Why does this crane keep slowing down for no reason?",
+  "loop": "Ends on 'which is why, at every container port on earth,' handing back into scene 2. Pattern A.",
+  "scenes": [
+    { "id": 1, "text": "Watch this.", "visual_1": "port crane container", "visual_2": "container terminal cranes", "visual_fallback": "port crane" },
+    { "id": 2, "text": "A container crane never moves at a steady speed. It rushes, eases, then creeps the last few metres.", "visual_1": "crane lifting container", "visual_2": "container terminal aerial", "visual_fallback": "containers" },
+    { "id": 3, "text": "Over and over, on every lift.", "visual_1": "shipping containers stacked", "visual_2": "port containers rows", "visual_fallback": "containers" },
+    { "id": 4, "text": "So is the operator being careful? Feeling their way into position by eye?", "visual_1": "crane operator cabin", "visual_2": "industrial control panel", "visual_fallback": "industrial" },
+    { "id": 5, "text": "Not at all. Most of that motion is not a choice.", "visual_1": "crane cables steel", "visual_2": "heavy machinery port", "visual_fallback": "crane" },
+    { "id": 6, "text": "A container hanging from cables is a pendulum. One that weighs thirty tons.", "visual_1": "container hanging crane", "visual_2": "steel cable tension", "visual_fallback": "crane" },
+    { "id": 7, "text": "And a pendulum has a natural rhythm set only by the length of its cables.", "visual_1": "crane cables long", "visual_2": "crane hoist mechanism", "visual_fallback": "crane" },
+    { "id": 8, "text": "On a tall port crane, one full swing takes around eight seconds.", "visual_1": "tall port crane", "visual_2": "crane structure sky", "visual_fallback": "crane" },
+    { "id": 9, "text": "Start the trolley moving, and the container is left behind, then swings forward past it.", "visual_1": "crane trolley moving", "visual_2": "container ship loading", "visual_fallback": "containers" },
+    { "id": 10, "text": "Stop the trolley, and the container keeps going.", "visual_1": "swinging load crane", "visual_2": "container suspended", "visual_fallback": "crane" },
+    { "id": 11, "text": "A swinging thirty ton box cannot be placed into a slot with centimetres of clearance.", "visual_1": "containers stacked close", "visual_2": "container slot alignment", "visual_fallback": "containers" },
+    { "id": 12, "text": "So the crane does something counterintuitive. It starts a second swing on purpose.", "visual_1": "port crane moving", "visual_2": "crane arm motion", "visual_fallback": "crane" },
+    { "id": 13, "text": "It accelerates, pauses, then accelerates again, timed to the container's own rhythm.", "visual_1": "container terminal operation", "visual_2": "port crane working", "visual_fallback": "port" },
+    { "id": 14, "text": "The second swing is aimed to cancel the first, exactly out of step with it.", "visual_1": "crane cables container", "visual_2": "container moving air", "visual_fallback": "crane" },
+    { "id": 15, "text": "Done correctly, the box arrives over the slot already hanging perfectly still.", "visual_1": "container placed stack", "visual_2": "containers aerial port", "visual_fallback": "containers" },
+    { "id": 16, "text": "Get the timing wrong, and the operator has to wait for the swing to die out on its own.", "visual_1": "crane waiting container", "visual_2": "port terminal wide", "visual_fallback": "port" },
+    { "id": 17, "text": "That wait can cost half a minute. Multiply it across two thousand containers and a ship misses its tide.", "visual_1": "container ship port aerial", "visual_2": "port containers sunset", "visual_fallback": "port" },
+    { "id": 18, "text": "The hesitation was never caution. It is the fastest way to move thirty tons through open air.", "visual_1": "port crane sunset", "visual_2": "container terminal night", "visual_fallback": "port" },
+    { "id": 19, "text": "Which is why, at every container port on earth,", "visual_1": "port aerial containers", "visual_2": "cargo ship port crane", "visual_fallback": "port" }
+  ]
+}

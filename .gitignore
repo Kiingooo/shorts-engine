@@ -1,0 +1,7 @@
+.env
+node_modules/
+work/
+out/
+_reference/
+clips/
+!clips/.gitkeep

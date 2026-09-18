@@ -1,0 +1,10 @@
+{
+  "title": "Lil Woof reacts (demo)",
+  "source": "clips/sample.mp4",
+  "character": "lilwoof-v2",
+  "flapHz": 3,
+  "beats": [
+    { "at": 3.0, "line": "Hold up. Run that back, I need to see that again." },
+    { "at": 8.0, "line": "Nah, that is crazy. They really did that." }
+  ]
+}

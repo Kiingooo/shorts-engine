@@ -1,0 +1,27 @@
+{
+  "title": "Why Brand New Ships Are Already Covered in Rust",
+  "niche": "ships-and-ocean",
+  "hook": "Why is this ship rusting when it is barely a year old?",
+  "loop": "Ends on 'which is why almost every working ship you will ever see' handing back into scene 2. Pattern A.",
+  "scenes": [
+    { "id": 1, "text": "Can you believe this?", "visual_1": "rusty ship side", "visual_2": "ship hull weathered", "visual_fallback": "rust" },
+    { "id": 2, "text": "Look at almost any working ship, and you will see rust running down the sides in long streaks.", "visual_1": "rust streak metal wall", "visual_2": "ship hull rust", "visual_fallback": "rust metal" },
+    { "id": 3, "text": "Some of these vessels left the shipyard less than a year ago.", "visual_1": "new cargo ship", "visual_2": "shipyard construction ship", "visual_fallback": "shipyard" },
+    { "id": 4, "text": "So is the steel already failing? Did somebody simply stop maintaining it?", "visual_1": "abandoned rusty boat", "visual_2": "peeling paint metal", "visual_fallback": "rust" },
+    { "id": 5, "text": "Almost never.", "visual_1": "ship hull close up", "visual_2": "steel plate surface", "visual_fallback": "metal surface" },
+    { "id": 6, "text": "Most of that rust is not the hull at all.", "visual_1": "ship side plating", "visual_2": "painted steel surface", "visual_fallback": "metal surface" },
+    { "id": 7, "text": "A ship is covered in thousands of smaller parts. Railings, bolts, hatches, brackets, hinges.", "visual_1": "ship railing metal", "visual_2": "bolts rivets steel", "visual_fallback": "metal bolts" },
+    { "id": 8, "text": "They are made from different alloys, fitted by different hands, at different times.", "visual_1": "metal fittings industrial", "visual_2": "steel hardware close up", "visual_fallback": "metal" },
+    { "id": 9, "text": "And every one of them creates an edge, a seam, or a joint.", "visual_1": "metal seam weld", "visual_2": "welded joint steel", "visual_fallback": "welding" },
+    { "id": 10, "text": "Salt water finds every single one.", "visual_1": "sea water splashing metal", "visual_2": "waves hitting hull", "visual_fallback": "water metal" },
+    { "id": 11, "text": "It collects in the gaps, and out at sea it never fully dries.", "visual_1": "water droplets metal", "visual_2": "wet steel surface", "visual_fallback": "water metal" },
+    { "id": 12, "text": "Salt also holds moisture against the metal long after the spray has stopped.", "visual_1": "salt crystals surface", "visual_2": "sea spray ocean", "visual_fallback": "sea spray" },
+    { "id": 13, "text": "So the small parts corrode first, long before the plating around them.", "visual_1": "rusty bolt close up", "visual_2": "corroded metal detail", "visual_fallback": "rust" },
+    { "id": 14, "text": "Then it rains.", "visual_1": "rain water running", "visual_2": "rain on metal", "visual_fallback": "rain" },
+    { "id": 15, "text": "Water runs off each corroded fitting and carries the stain downward across perfectly good paint.", "visual_1": "rust streak wall", "visual_2": "stained wall surface", "visual_fallback": "rust stain" },
+    { "id": 16, "text": "The streak is not damage. It is a trail left by something small, higher up.", "visual_1": "ship hull streaked", "visual_2": "weathered painted metal", "visual_fallback": "rust" },
+    { "id": 17, "text": "Crews grind and repaint those fittings constantly, and the sea starts again immediately.", "visual_1": "worker painting ship", "visual_2": "ship maintenance dock", "visual_fallback": "shipyard" },
+    { "id": 18, "text": "A spotless hull at sea does not mean a healthy ship. It usually means a very recent repaint.", "visual_1": "clean cargo ship", "visual_2": "ship harbor sunset", "visual_fallback": "ship" },
+    { "id": 19, "text": "Which is why almost every working ship you will ever see", "visual_1": "cargo ship ocean", "visual_2": "container ship sea", "visual_fallback": "ship sea" }
+  ]
+}
