@@ -3,7 +3,9 @@
 Faceless short-form video factory. Two renderers share one pipeline:
 
 - **Knowledge shorts** — narrated explainers over stock footage, tweet-style layout
-- **Reaction shorts** — a cutout character watches a clip and talks over freeze frames
+- **Reaction shorts**: Lil Woof watches a clip and talks over it while it keeps playing
+
+Running this unattended every day: see [AGENT.md](AGENT.md).
 
 Node only. No Python, no admin rights, no system installs: ffmpeg ships as an npm
 package. **Nothing in the default path costs money.**
@@ -92,24 +94,48 @@ Script shape, in `scripts/reactions/<slug>.json`:
 }
 ```
 
-`at` is a timestamp in the source clip. The source plays with the character watching,
-then freezes and dims while he talks, then resumes. Put source clips in `clips/`.
+`at` is a timestamp in the source clip. The clip never pauses: he talks over it and
+the clip's own audio ducks under his voice. If a line is still running when the next
+beat is due, the next beat waits.
 
-Optional per-beat fields:
+Landscape sources get a panel with the character underneath on a blurred backdrop.
+Portrait sources fill the frame with the character in the corner.
+
+Doc fields: `hook` (text held at the top), `clipSlug` (marks a hunted clip as used
+once the video exists), `playToEnd: false` (cut after the last beat).
+
+Per-beat fields:
 
 | field | effect |
 |---|---|
+| `line` | what he says, synthesised and lip-synced |
+| `reaction` | plays `character/<name>/reactions/<reaction>.webm` at that moment: `shock`, `laugh`, `nod`, `shake`, `lean` |
+| `reactionPlays` | how many times the reaction loops, default 1 |
 | `sfx` | mixes a one-shot from `assets/sfx/` under the voice |
-| `voiceDrop` | plays a pre-recorded file from `assets/voice-drops/` instead of synthesising the line |
-| `dim` | `false` skips darkening the frozen frame |
+| `voiceDrop` | plays a file from `assets/voice-drops/` instead of synthesising the line |
 
-With `voiceDrop` there are no word timings, so the mouth flaps continuously for the
-length of the file and `line` is held as one static caption instead of word-by-word.
+A missing asset file is ignored rather than fatal.
 
-A missing asset file is ignored rather than fatal, so a script referencing sounds you
-have not added yet still renders.
+### Finding clips
 
-`"playToEnd": false` on the doc cuts after the last beat.
+```bash
+npm run hunt -- --top 15
+```
+
+Asks Twitch for the most viewed clips of the last day in a game's category, ranks
+them by views per hour, skips anything already used, and downloads the winners into
+`clips/hunt/` with a six-frame contact sheet each. Results land in
+`work/hunt/latest.json`. No API key, no account.
+
+| flag | default | meaning |
+|---|---|---|
+| `--game` | Grand Theft Auto VI | Twitch category name |
+| `--top` | 15 | how many to download |
+| `--lang` | EN | clip language, `ANY` for all |
+| `--period` | LAST_DAY | `LAST_DAY`, `LAST_WEEK`, `LAST_MONTH`, `ALL_TIME` |
+| `--min` / `--max` | 12 / 60 | clip length in seconds |
+| `--per-streamer` | 2 | cap per streamer so one channel cannot fill the list |
+| `--no-download` | off | list only |
 
 ### Getting source clips
 
