@@ -73,17 +73,40 @@ async function synthesizeEdge(text, outFile) {
 
   const chunks = [];
   const words = [];
-  for await (const ev of c.stream()) {
-    if (ev.type === 'audio' && ev.data) chunks.push(Buffer.from(ev.data));
-    // Offsets arrive in 100-nanosecond ticks.
-    if (ev.type === 'WordBoundary') {
-      words.push({
-        text: ev.text,
-        start: ev.offset / 1e7,
-        end: (ev.offset + ev.duration) / 1e7,
-      });
+
+  const consume = (async () => {
+    for await (const ev of c.stream()) {
+      if (ev.type === 'audio' && ev.data) chunks.push(Buffer.from(ev.data));
+      // Offsets arrive in 100-nanosecond ticks.
+      if (ev.type === 'WordBoundary') {
+        words.push({
+          text: ev.text,
+          start: ev.offset / 1e7,
+          end: (ev.offset + ev.duration) / 1e7,
+        });
+      }
     }
+  })();
+
+  // Microsoft's free endpoint can stop answering without closing the socket.
+  // The iterator then never settles, Node sees an empty event loop and the
+  // whole process exits 0 with no output, which looks like success to any
+  // caller. A timeout turns that into a normal, reportable failure.
+  const timeoutMs = Number(process.env.EDGE_TIMEOUT_MS || 45000);
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`Edge TTS timed out after ${timeoutMs}ms (endpoint may have changed; set VOICE_PROVIDER=elevenlabs)`)),
+      timeoutMs,
+    );
+  });
+
+  try {
+    await Promise.race([consume, timeout]);
+  } finally {
+    clearTimeout(timer);
   }
+
   if (!chunks.length) throw new Error('Edge TTS returned no audio');
   fs.writeFileSync(outFile, Buffer.concat(chunks));
 

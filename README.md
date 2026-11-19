@@ -135,6 +135,15 @@ merges fail.
 reliable; if it fails, pass the direct `.m3u8` instead of the page URL. Chat replay is
 not covered by yt-dlp, that needs TwitchDownloaderCLI.
 
+### Voice provider status
+
+⚠️ **Edge TTS is currently broken.** Microsoft stopped answering without closing
+the socket, so the stream never settles; Node then exits 0 with no output and an
+unattended run looks like it succeeded. There is a 45s timeout now, so it fails
+loudly instead. Until the package catches up, set:
+
+
+
 ### Finding moments
 
 ```bash
@@ -160,6 +169,18 @@ Audio is streamed as low-rate mono PCM and reduced to RMS windows in process. Pa
 ffmpeg's astats log lines is fragile, and decoding a three hour VOD into one buffer is
 hundreds of megabytes, so neither is used. The baseline is the **median** window, not
 the mean, so a handful of very loud moments cannot drag it upward and hide the rest.
+
+Loudness only separates moments when the audio has quiet stretches, which is true of
+a stream and false of a trailer where music runs wall to wall. When fewer than half
+the requested moments survive spacing, the scan falls back to **scene cuts** instead.
+
+### Clips, unattended
+
+
+
+ cuts a segment per candidate, writes a reaction script for it and renders
+it. The lines file supplies what the character says, one per clip, so the writing
+stays a human or agent decision and this stays mechanical.
 
 ⚠️ Loudness finds reactions, not quality. It will flag a sneeze as readily as a clutch
 play. It is a shortlist, not a decision.

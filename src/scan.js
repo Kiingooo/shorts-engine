@@ -83,6 +83,31 @@ function rmsWindows(file, windowSec) {
   });
 }
 
+/**
+ * Visual scene cuts.
+ *
+ * Loudness only separates moments when the audio has quiet stretches, which
+ * is true of a stream and false of a trailer or an edited video where music
+ * runs wall to wall. There, the signal is how hard the picture changes.
+ */
+async function sceneCuts(file, threshold) {
+  // showinfo prints one line per selected frame on stderr. metadata=print
+  // would carry the scene score too, but it writes to a different stream and
+  // is fiddlier to parse for no real gain: spacing decides the picks anyway.
+  const { stderr } = await run(ffmpegPath, [
+    '-hide_banner', '-v', 'info', '-y',
+    '-i', file,
+    '-filter_complex', `select='gt(scene,${threshold})',showinfo`,
+    '-f', 'null', '-',
+  ], { maxBuffer: 1 << 28 }).catch((e) => ({ stderr: e.stderr || '' }));
+
+  const out = [];
+  const re = /pts_time:([\d.]+)/g;
+  let m;
+  while ((m = re.exec(String(stderr)))) out.push({ t: parseFloat(m[1]), score: 1 });
+  return out;
+}
+
 /** Median is used rather than mean: a few very loud moments must not drag the baseline up. */
 function median(arr) {
   const s = [...arr].sort((a, b) => a - b);
@@ -107,29 +132,50 @@ async function main() {
 
   console.log(`\nscanning ${path.basename(file)}  ${(duration / 60).toFixed(1)} min`);
 
-  const windows = await rmsWindows(file, windowSec);
-  if (!windows.length) throw new Error('No audio found in that file');
+  const mode = arg('mode', 'auto');
+  let hot = [];
+  let base = 0;
+  let used = mode;
 
-  const base = median(windows);
-  const peak = Math.max(...windows);
-  console.log(`  ${windows.length} windows · baseline ${base.toFixed(4)} · peak ${peak.toFixed(4)}`);
+  if (mode !== 'scene') {
+    const windows = await rmsWindows(file, windowSec);
+    if (!windows.length) throw new Error('No audio found in that file');
+    base = median(windows);
+    console.log(`  ${windows.length} windows · baseline ${base.toFixed(4)} · peak ${Math.max(...windows).toFixed(4)}`);
 
-  // Score each window by how far above the baseline it sits.
-  const scored = windows.map((v, i) => ({ t: i * windowSec, v, ratio: base > 0 ? v / base : 0 }));
+    const scored = windows.map((v, i) => ({ t: i * windowSec, v, ratio: base > 0 ? v / base : 0 }));
+    hot = scored.filter((w) => w.ratio > 1.6).sort((a, b) => b.ratio - a.ratio);
+    used = 'audio';
+  }
 
-  // Keep only the clearly-above-normal ones, then collapse neighbours so one
-  // long reaction does not occupy twenty slots.
-  const hot = scored.filter((w) => w.ratio > 1.6).sort((a, b) => b.ratio - a.ratio);
-
-  const picked = [];
   // Distinct moments only. Too large and two separate reactions 20s apart
   // collapse into one; too small and a single long reaction eats every slot.
   const MIN_GAP = parseFloat(arg('gap', '12'));
-  for (const w of hot) {
-    if (picked.length >= top) break;
-    if (picked.some((p) => Math.abs(p.t - w.t) < MIN_GAP)) continue;
-    picked.push(w);
+  const spread = (list) => {
+    const out = [];
+    for (const w of list) {
+      if (out.length >= top) break;
+      if (out.some((p) => Math.abs(p.t - w.t) < MIN_GAP)) continue;
+      out.push(w);
+    }
+    return out;
+  };
+
+  let picked = spread(hot);
+
+  // Wall-to-wall music keeps every window near the baseline, so audio spikes
+  // cluster into a handful of places. Judge the fallback on how many DISTINCT
+  // moments survived spacing, not on the raw spike count.
+  if (mode === 'scene' || (mode === 'auto' && picked.length < top / 2)) {
+    if (used === 'audio') console.log(`  only ${picked.length} distinct audio moments, switching to scene cuts`);
+    const cuts = await sceneCuts(file, parseFloat(arg('scene', '0.25')));
+    console.log(`  ${cuts.length} scene cuts`);
+    hot = cuts.map((c) => ({ t: c.t, v: c.score, ratio: +(1 + c.score).toFixed(2) }))
+      .sort((a, b) => b.ratio - a.ratio);
+    used = 'scene';
+    picked = spread(hot);
   }
+
   picked.sort((a, b) => a.t - b.t);
 
   const stamp = (s) => {
@@ -175,6 +221,7 @@ async function main() {
   fs.writeFileSync(jsonFile, JSON.stringify({
     source: path.relative(process.cwd(), file),
     duration: +duration.toFixed(2),
+    mode: used,
     baseline: +base.toFixed(5),
     windowSec,
     candidates,

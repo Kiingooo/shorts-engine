@@ -13,7 +13,8 @@
     "react": "node src/reaction.js",
     "setup": "node src/setup.js",
     "grab": "node src/grab.js",
-    "scan": "node src/scan.js"
+    "scan": "node src/scan.js",
+    "autoclip": "node src/autoclip.js"
   },
   "keywords": [],
   "author": "",
