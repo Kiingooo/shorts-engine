@@ -12,7 +12,8 @@
     "puppet": "node src/puppet.js",
     "react": "node src/reaction.js",
     "setup": "node src/setup.js",
-    "grab": "node src/grab.js"
+    "grab": "node src/grab.js",
+    "scan": "node src/scan.js"
   },
   "keywords": [],
   "author": "",

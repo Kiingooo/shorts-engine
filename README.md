@@ -131,6 +131,39 @@ yt-dlp also needs ffmpeg on PATH to merge video and audio. This project ships it
 own ffmpeg for rendering, but yt-dlp cannot see it, so install ffmpeg separately if
 merges fail.
 
+**Twitch** VODs and clips work out of the box. **Kick** usually works but is less
+reliable; if it fails, pass the direct `.m3u8` instead of the page URL. Chat replay is
+not covered by yt-dlp, that needs TwitchDownloaderCLI.
+
+### Finding moments
+
+```bash
+npm run scan -- --in clips/vod.mp4 --top 20 --thumbs
+```
+
+Scans a long recording for loudness spikes, which on a stream are nearly always the
+streamer reacting to something, and writes ranked candidate timestamps to
+`work/scan/<name>.json`. With `--thumbs` it also drops a jpg per candidate so picking
+is visual.
+
+A three hour VOD reduces to twenty timestamps without anyone watching it. Pick three,
+paste them into a reaction script as `at` values.
+
+| flag | default | meaning |
+|---|---|---|
+| `--top` | 20 | how many candidates to return |
+| `--window` | 0.5 | seconds per analysis window |
+| `--gap` | 12 | minimum seconds between two distinct moments |
+| `--thumbs` | off | also write a thumbnail per candidate |
+
+Audio is streamed as low-rate mono PCM and reduced to RMS windows in process. Parsing
+ffmpeg's astats log lines is fragile, and decoding a three hour VOD into one buffer is
+hundreds of megabytes, so neither is used. The baseline is the **median** window, not
+the mean, so a handful of very loud moments cannot drag it upward and hide the rest.
+
+⚠️ Loudness finds reactions, not quality. It will flag a sneeze as readily as a clutch
+play. It is a shortlist, not a decision.
+
 ---
 
 ## Character puppet
