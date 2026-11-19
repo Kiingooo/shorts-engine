@@ -98,7 +98,7 @@ Script shape, in `scripts/reactions/<slug>.json`:
 the clip's own audio ducks under his voice. If a line is still running when the next
 beat is due, the next beat waits.
 
-Landscape sources get a panel with the character underneath on a blurred backdrop.
+Landscape sources are shown whole, never cropped, with the character underneath on a blurred backdrop.
 Portrait sources fill the frame with the character in the corner.
 
 Doc fields: `hook` (text held at the top), `clipSlug` (marks a hunted clip as used

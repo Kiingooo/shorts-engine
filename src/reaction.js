@@ -37,9 +37,9 @@ const DUCK = 0.22;          // source volume while he talks
 const GAP = 0.3;            // breath between two lines
 
 // Landscape sources sit in a panel with the character underneath.
-const PANEL_Y = 250;
-const PANEL_H = 960;
-const STACK_CHAR_W = 840;
+// The whole frame is shown, never cropped, so the streamer's camera stays in.
+const PANEL_Y = 270;
+const STACK_CHAR_W = 900;
 const STACK_CHAR_Y = H - STACK_CHAR_W + 70;
 // Portrait sources fill the frame with the character in the corner.
 const CORNER_CHAR_W = 460;
@@ -155,6 +155,7 @@ async function main() {
   const hasAudio = streams.includes('audio');
   const [sw, sh] = (await probe(source, 'stream=width,height', ['-select_streams', 'v:0'])).map(Number);
   const stack = sw > sh;
+  const PANEL_H = Math.round((W * sh) / sw / 2) * 2;
   const CHAR_W = stack ? STACK_CHAR_W : CORNER_CHAR_W;
   const charPos = stack
     ? `overlay=${Math.round((W - CHAR_W) / 2)}:${STACK_CHAR_Y}`
@@ -229,7 +230,7 @@ async function main() {
     hook: doc.hook,
     lines: talks,
     total,
-    capMarginV: stack ? H - (PANEL_Y + PANEL_H) + 24 : 640,
+    capMarginV: stack ? H - (PANEL_Y + PANEL_H) - 130 : 640,
   });
 
   // ---- inputs ------------------------------------------------------------
@@ -269,7 +270,7 @@ async function main() {
   if (stack) {
     g.push(`[0:v]fps=${FPS},setsar=1${pad},split=2[sa][sb]`);
     g.push(`[sa]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},boxblur=28:4,eq=brightness=-0.22[bg]`);
-    g.push(`[sb]scale=-2:${PANEL_H},crop=${W}:${PANEL_H}[panel]`);
+    g.push(`[sb]scale=${W}:${PANEL_H}[panel]`);
     g.push(`[bg][panel]overlay=0:${PANEL_Y}[base]`);
   } else {
     g.push(`[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1${pad}[base]`);
