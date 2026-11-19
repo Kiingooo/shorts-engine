@@ -142,7 +142,9 @@ the socket, so the stream never settles; Node then exits 0 with no output and an
 unattended run looks like it succeeded. There is a 45s timeout now, so it fails
 loudly instead. Until the package catches up, set:
 
-
+```
+VOICE_PROVIDER=elevenlabs
+```
 
 ### Finding moments
 
@@ -164,6 +166,8 @@ paste them into a reaction script as `at` values.
 | `--window` | 0.5 | seconds per analysis window |
 | `--gap` | 12 | minimum seconds between two distinct moments |
 | `--thumbs` | off | also write a thumbnail per candidate |
+| `--mode` | auto | `audio`, `scene`, or `auto` to try audio then fall back |
+| `--scene` | 0.25 | scene-change sensitivity, lower finds more cuts |
 
 Audio is streamed as low-rate mono PCM and reduced to RMS windows in process. Parsing
 ffmpeg's astats log lines is fragile, and decoding a three hour VOD into one buffer is
@@ -176,9 +180,12 @@ the requested moments survive spacing, the scan falls back to **scene cuts** ins
 
 ### Clips, unattended
 
+```bash
+npm run scan     -- --in clips/vod.mp4 --top 10 --thumbs
+npm run autoclip -- --scan work/scan/vod.json --lines scripts/lines/vod.json --limit 10
+```
 
-
- cuts a segment per candidate, writes a reaction script for it and renders
+`autoclip` cuts a segment per candidate, writes a reaction script for it and renders
 it. The lines file supplies what the character says, one per clip, so the writing
 stays a human or agent decision and this stays mechanical.
 
