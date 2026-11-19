@@ -52,7 +52,7 @@ const QUERY = `query($game:String!, $period:ClipsPeriod!){
 
 // One page only. Twitch refuses a second page without a browser integrity
 // token, and the first hundred already holds everything worth using.
-async function fetchClips(game, period) {
+async function fetchOnce(game, period) {
   const res = await fetch(GQL, {
     method: 'POST',
     headers: { 'Client-ID': CLIENT_ID, 'content-type': 'application/json' },
@@ -61,9 +61,24 @@ async function fetchClips(game, period) {
   if (!res.ok) throw new Error(`Twitch answered ${res.status}`);
   const json = await res.json();
   if (json.errors) throw new Error(`Twitch: ${JSON.stringify(json.errors).slice(0, 200)}`);
-  const clips = json.data?.game?.clips;
-  if (!clips) throw new Error(`No Twitch category called "${game}"`);
-  return clips.edges.map((e) => e.node);
+  if (!json.data?.game) throw new Error(`No Twitch category called "${game}"`);
+  return json.data.game.clips.edges.map((e) => e.node);
+}
+
+// Twitch answers "service error" on a fair share of calls for no reason and
+// then works on the next one, so a single failure means nothing.
+async function fetchClips(game, period) {
+  let lastError;
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    try {
+      return await fetchOnce(game, period);
+    } catch (e) {
+      lastError = e;
+      if (/No Twitch category/.test(e.message)) break;
+      await new Promise((r) => setTimeout(r, 1500 * attempt));
+    }
+  }
+  throw lastError;
 }
 
 async function download(url, out) {
