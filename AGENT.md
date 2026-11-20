@@ -18,11 +18,11 @@ ELEVENLABS_API_KEY=<the key>
 ELEVENLABS_VOICE_ID=k4ci7YBR1aPJ3aczoJUQ
 ELEVENLABS_MODEL=eleven_v4
 VOICE_SPEED=1.15
-R2_ACCOUNT_ID=ffcf73f6278d1f8770ea7d9e29532e0e
-R2_BUCKET=shortvidengine
-R2_ACCESS_KEY_ID=<R2 token key id>
-R2_SECRET_ACCESS_KEY=<R2 token secret>
 ```
+
+Uploads go through wrangler, which must already be logged in to the
+Cloudflare account that owns the `shortvidengine` bucket. Check with
+`npx wrangler whoami`.
 
 Never print or commit it.
 
@@ -148,8 +148,8 @@ in `out/` as backlog for days with a weak hunt.
 For each upload:
 
 - **File:** run `npm run upload -- out/<id>.mp4`. It uploads the video to the
-  private R2 bucket and prints a link that works for 24 hours. Give that link
-  to Composio as the video file. If the command does not print ✅, do not post.
+  `shortvidengine` R2 bucket with wrangler and prints its public link. Give
+  that link to Composio as the video file. If the command does not print ✅, do not post.
 - **Title:** the hook, then ` #shorts #gta6`. Under 90 characters.
 - **Description:** always exactly these three lines, filled in:
 
