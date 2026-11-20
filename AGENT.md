@@ -11,7 +11,7 @@ pipx install yt-dlp
 ```
 
 `.env` must contain `VOICE_PROVIDER=elevenlabs`, `ELEVENLABS_API_KEY`,
-`ELEVENLABS_VOICE_ID`. Never print or commit it.
+`ELEVENLABS_VOICE_ID=k4ci7YBR1aPJ3aczoJUQ`, `ELEVENLABS_MODEL=eleven_v4`. Never print or commit it.
 
 ## Every day
 
@@ -64,8 +64,9 @@ picked twice.
 Rules for the writing. These are not optional.
 
 - **He talks a lot.** His lines must cover 60 to 75 percent of the clip. A 30
-  second clip needs 3 or 4 lines of 2 to 3 sentences each. Roughly 2.7 words
-  are spoken per second, so 30 seconds needs about 55 to 60 words in total.
+  second clip needs 3 or 4 lines of 2 to 3 sentences each. His voice is slow:
+  about 2 words per second, so 30 seconds needs about 40 to 45 words in total.
+  Count the words. Too many and his lines run late against the action.
 - **First line starts inside the first second** (`"at": 0.6`). No silent
   opening.
 - **Lines follow what is on screen.** Use the six frames to place each `at`:
@@ -73,6 +74,10 @@ Rules for the writing. These are not optional.
 - **Voice:** a laid back hip hop dog watching his homie play. Short punchy
   sentences. Dog jokes are welcome, one per video at most. No swearing, no
   slurs, nothing about real people's looks.
+- **Expression tags:** put 2 or 3 per line in square brackets, before the words
+  they colour: `[chuckles]`, `[laughs]`, `[laughing]`, `[gasps]`, `[shocked]`,
+  `[sighs]`, `[amused]`, `[deadpan]`, `[whispers]`, `[excited]`. They are
+  performed, never shown in captions. A tag adds about half a second.
 - **Never describe only.** Every line needs an opinion, a joke or a
   comparison.
 - **Hook:** a question or a claim of 4 to 8 words about what the viewer is

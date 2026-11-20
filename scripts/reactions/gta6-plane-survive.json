@@ -6,11 +6,29 @@
   "credit": "caseoh_ on Twitch",
   "character": "lilwoof-3d",
   "beats": [
-    { "at": 0.6, "line": "Okay, the game said land near the dock. Simple. My man is coming in sideways like the plane owes him money." },
-    { "at": 7.2, "reaction": "shock" },
-    { "at": 8.2, "line": "Nah. Nah nah nah. That plane just did a full barrel roll into the ocean and parked itself. I have seen dogs fall off a couch worse than that." },
-    { "at": 17.5, "line": "Everybody on that flight needs to call their mama right now. Then call a lawyer." },
-    { "at": 23.5, "reaction": "laugh", "reactionPlays": 1 },
-    { "at": 25.0, "line": "Two billion dollars of physics, and the plane said, you know what, I am a boat now. Do not question it. Just accept it." }
+    {
+      "at": 0.5,
+      "line": "[chuckles] Game said land near the dock. [amused] My man is coming in sideways."
+    },
+    {
+      "at": 7.0,
+      "reaction": "shock"
+    },
+    {
+      "at": 8.0,
+      "line": "[gasps] Nah. Nah nah nah. [shocked] That plane did a full barrel roll and parked itself. [laughs] I seen dogs fall off a couch worse."
+    },
+    {
+      "at": 18.5,
+      "line": "[sighs] Everybody on that flight, call your mama. [deadpan] Then call a lawyer."
+    },
+    {
+      "at": 24.5,
+      "reaction": "laugh"
+    },
+    {
+      "at": 26.0,
+      "line": "[laughing] Two billion dollars of physics, and the plane said, I am a boat now. [whispers] Just accept it."
+    }
   ]
 }

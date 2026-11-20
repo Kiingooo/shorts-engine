@@ -29,7 +29,13 @@ function cacheKey(text) {
 function charsToWords(chars, starts, ends) {
   const words = [];
   let cur = null;
+  let tag = 0;
   for (let i = 0; i < chars.length; i++) {
+    // Expression tags like [laughs] are performed, not spoken, so they must
+    // not turn into caption words or mouth flaps.
+    if (chars[i] === '[') { tag++; if (cur) { words.push(cur); cur = null; } continue; }
+    if (chars[i] === ']') { tag = Math.max(0, tag - 1); continue; }
+    if (tag) continue;
     if (/\s/.test(chars[i])) { if (cur) { words.push(cur); cur = null; } continue; }
     if (!cur) cur = { text: '', start: starts[i], end: ends[i] };
     cur.text += chars[i];
@@ -51,7 +57,11 @@ async function synthesizeEleven(text, outFile) {
       body: JSON.stringify({
         text,
         model_id: config.elevenModel,
-        voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true },
+        // v3 and later take their delivery from expression tags in the text
+        // and reject the older fine-grained settings.
+        ...(/^eleven_v[3-9]/.test(config.elevenModel)
+          ? {}
+          : { voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true } }),
       }),
     },
   );
