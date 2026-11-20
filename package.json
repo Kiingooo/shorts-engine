@@ -15,7 +15,8 @@
     "grab": "node src/grab.js",
     "scan": "node src/scan.js",
     "autoclip": "node src/autoclip.js",
-    "hunt": "node src/hunt.js"
+    "hunt": "node src/hunt.js",
+    "upload": "node src/upload.js"
   },
   "keywords": [],
   "author": "",
