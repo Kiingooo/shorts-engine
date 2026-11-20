@@ -27,6 +27,8 @@ export const config = {
   elevenKey: process.env.ELEVENLABS_API_KEY || '',
   voiceId: process.env.ELEVENLABS_VOICE_ID || '',
   elevenModel: process.env.ELEVENLABS_MODEL || 'eleven_multilingual_v2',
+  // Playback speed applied after synthesis. 1.15 = 15 percent faster.
+  voiceSpeed: Math.min(1.5, Math.max(0.8, parseFloat(process.env.VOICE_SPEED || '1') || 1)),
   pexelsKey: process.env.PEXELS_API_KEY || '',
   pixabayKey: process.env.PIXABAY_API_KEY || '',
   width: 1080,

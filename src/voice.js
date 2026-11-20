@@ -1,7 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import ffmpegPath from 'ffmpeg-static';
 import { config, dirs } from './config.js';
+
+const run = promisify(execFile);
 
 const API = 'https://api.elevenlabs.io/v1';
 
@@ -123,7 +128,30 @@ async function synthesizeEdge(text, outFile) {
   return { words, duration: words.length ? words[words.length - 1].end : 0 };
 }
 
+/**
+ * Speeds the finished narration up or down and moves every word timing with
+ * it. Done after the cache on purpose: changing VOICE_SPEED re-times audio
+ * that is already paid for instead of buying it again.
+ */
+async function retime(result, speed) {
+  if (Math.abs(speed - 1) < 0.01) return result;
+  const tmp = result.audioFile.replace(/(\.\w+)$/, '.raw$1');
+  fs.renameSync(result.audioFile, tmp);
+  await run(ffmpegPath, ['-hide_banner', '-loglevel', 'error', '-y', '-i', tmp,
+    '-filter:a', `atempo=${speed}`, result.audioFile]);
+  fs.rmSync(tmp, { force: true });
+  return {
+    ...result,
+    duration: result.duration / speed,
+    words: result.words.map((w) => ({ ...w, start: w.start / speed, end: w.end / speed })),
+  };
+}
+
 export async function synthesize(text, outFile) {
+  return retime(await synthesizeRaw(text, outFile), config.voiceSpeed);
+}
+
+async function synthesizeRaw(text, outFile) {
   const key = cacheKey(text);
   const cachedAudio = path.join(dirs.cache, `tts_${key}.mp3`);
   const cachedMeta = path.join(dirs.cache, `tts_${key}.json`);
